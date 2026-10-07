@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Código por completar POO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una columna de lectura; tarjetas de ejercicio con panel de código oscuro, banco de piezas debajo. */
+:root {
+  --bg: #eef1f5;
+  --surface: #ffffff;
+  --ink: #141c2b;
+  --muted: #55627a;
+  --line: #d3dae5;
+  --accent: #0b6e7f;
+  --accent-weak: #d9eef1;
+  --accent-ink: #ffffff;
+  --code-bg: #101827;
+  --code-fg: #dbe4f3;
+  --code-kw: #ff9e64;
+  --code-str: #9ece6a;
+  --code-cm: #7384a0;
+  --code-ty: #7dcfff;
+  --code-num: #e0af68;
+  --slot-bd: #7384a0;
+  --slot-bg: #1a2438;
+  --slot-fg: #ffffff;
+  --ok: #3fb97a;
+  --ok-bg: #12301f;
+  --bad: #ff6b6b;
+  --bad-bg: #3a1620;
+  --chip-bg: #f6f8fb;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c121d; --surface: #131b2a; --ink: #e6ecf6; --muted: #98a6bd; --line: #26324a;
+    --accent: #4cc3d6; --accent-weak: #12303a; --accent-ink: #06222a;
+    --code-bg: #0a0f19; --chip-bg: #1a2438;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c121d; --surface: #131b2a; --ink: #e6ecf6; --muted: #98a6bd; --line: #26324a;
+  --accent: #4cc3d6; --accent-weak: #12303a; --accent-ink: #06222a;
+  --code-bg: #0a0f19; --chip-bg: #1a2438;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 880px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 56px; }
+header h1 { font-family: var(--font-display); font-size: clamp(1.7rem, 4.5vw, 2.4rem); line-height: 1.1; margin: 0 0 8px; text-wrap: balance; letter-spacing: -0.01em; }
+header p { margin: 0; color: var(--muted); max-width: 62ch; }
+.howto { margin-top: 16px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; font-size: 0.92rem; color: var(--muted); }
+.howto b { color: var(--ink); font-weight: 600; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 24px 16px; }
+.tab { font: inherit; font-weight: 500; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+.tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tab .count { font-family: var(--font-mono); font-size: 0.8rem; opacity: 0.85; font-variant-numeric: tabular-nums; }
+.tab:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.panel { display: flex; flex-direction: column; gap: 20px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card h2 { font-family: var(--font-display); font-size: 1.15rem; margin: 0; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.card h2 .n { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+.badge { font-family: var(--font-body); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ok-ink, #1d7a4b); background: color-mix(in srgb, var(--ok) 18%, transparent); border-radius: 4px; padding: 2px 7px; }
+.card p.prompt { margin: 0; color: var(--muted); }
+pre.code { margin: 0; background: var(--code-bg); color: var(--code-fg); border-radius: 8px; padding: 14px 14px; font-family: var(--font-mono); font-size: 0.86rem; line-height: 1.9; overflow-x: auto; }
+pre.code .ln { display: block; white-space: pre; min-height: 1.9em; }
+.kw { color: var(--code-kw); } .str { color: var(--code-str); } .ty { color: var(--code-ty); } .num { color: var(--code-num); } .cm { color: var(--code-cm); font-style: italic; }
+.slot { font-family: var(--font-mono); font-size: 0.86rem; color: var(--slot-fg); background: var(--slot-bg); border: 1.5px dashed var(--slot-bd); border-radius: 5px; padding: 0 8px; min-width: 6ch; height: 1.7em; line-height: 1.5em; cursor: pointer; vertical-align: baseline; }
+.slot.over { border-color: var(--code-ty); background: #1d2f4a; }
+.slot.filled { border-style: solid; border-color: var(--code-ty); }
+.slot.ok { border-style: solid; border-color: var(--ok); background: var(--ok-bg); color: #b9f3d2; }
+.slot.bad { border-style: solid; border-color: var(--bad); background: var(--bad-bg); color: #ffc9c9; }
+.bank { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; border: 1px dashed var(--line); border-radius: 8px; min-height: 52px; align-items: center; }
+.bank.over { border-color: var(--accent); background: var(--accent-weak); }
+.bank .empty { color: var(--muted); font-size: 0.88rem; }
+.chip { font-family: var(--font-mono); font-size: 0.86rem; padding: 6px 11px; border-radius: 6px; border: 1px solid var(--line); background: var(--chip-bg); color: var(--ink); cursor: grab; }
+.chip.sel { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { font: inherit; font-size: 0.9rem; font-weight: 500; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.result { font-size: 0.92rem; padding: 10px 12px; border-radius: 6px; background: var(--accent-weak); }
+.result.good { background: color-mix(in srgb, var(--ok) 16%, var(--surface)); }
+.result.warn { background: color-mix(in srgb, var(--bad) 12%, var(--surface)); }
+.result strong { font-weight: 600; }
+footer { margin-top: 28px; color: var(--muted); font-size: 0.85rem; }
+@media (prefers-reduced-motion: no-preference) { .chip, .slot, .btn, .tab { transition: background 0.12s, border-color 0.12s, color 0.12s; } }
+</style>
+
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Código por completar</h1>
+    <p>Ejercicios de POO en Java basados en los PPT de las semanas 1 a 6 del profesor Mercado. Arrastra cada pieza a su hueco y comprueba tu respuesta.</p>
+    <div class="howto"><b>Cómo se juega:</b> arrastra una pieza al hueco, o toca la pieza y luego el hueco (en el celular). Toca un hueco lleno para devolver la pieza al banco. Algunas piezas sobran a propósito.</div>
+  </header>
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <main id="panels"></main>
+  <footer>Tu avance se guarda solo en este navegador.</footer>
+</div>
+
+<script>
+const GROUPS = [
+  { key: "A", label: "Sem. 1–2", title: "Clases, encapsulamiento, constructores y relaciones" },
+  { key: "B", label: "Sem. 3–4", title: "this, static, final, acceso y herencia" },
+  { key: "C", label: "Sem. 5–6", title: "Polimorfismo, interfaces y ArrayList" }
+];
+
+const EX = {
+  A: [
+    { t: "Clase con atributos encapsulados", p: "Los atributos se protegen con private y el constructor usa this para distinguirlos de los parámetros.",
+      code: `public {{0}} Alumno {
+    {{1}} String nombre;
+    {{2}} int edad;
+
+    public Alumno(String nombre, int edad) {
+        {{3}}.nombre = nombre;
+        {{4}}.edad = edad;
+    }
+}`,
+      ans: ["class", "private", "private", "this", "this"], extra: ["interface", "static", "super"],
+      why: "Una clase se declara con class. private oculta los atributos y this.nombre es el atributo del objeto, mientras que nombre es el parámetro." },
+    { t: "Getter y setter con validación", p: "El saldo nunca puede quedar negativo, por eso solo se modifica con un método controlado.",
+      code: `public class CuentaBancaria {
+    private double saldo;
+
+    public {{0}} getSaldo() {
+        {{1}} saldo;
+    }
+
+    public {{2}} setSaldo(double saldo) {
+        if (saldo >= 0) {
+            this.saldo = saldo;
+        }
+    }
+}`,
+      ans: ["double", "return", "void"], extra: ["int", "static", "new"],
+      why: "El get devuelve el mismo tipo del atributo (double) con return. El set no devuelve nada, por eso es void." },
+    { t: "Crear objetos y usar sus métodos", p: "Crea un objeto Libro con new, lee su título y guarda los libros en un arreglo.",
+      code: `Libro libro1 = {{0}} Libro("Java Básico", "Deitel", 2008);
+String titulo = libro1.{{1}}();
+Libro[] biblioteca = new {{2}}[3];
+biblioteca[0] = libro1;`,
+      ans: ["new", "getTitulo", "Libro"], extra: ["this", "class", "setTitulo"],
+      why: "new crea la instancia. Se accede a sus métodos con el punto, y un arreglo de objetos se declara con el nombre de la clase: new Libro[3]." },
+    { t: "Constructores sobrecargados", p: "Un constructor tiene el mismo nombre que la clase y no lleva tipo de retorno, ni siquiera void.",
+      code: `public class Producto {
+    private String nombre;
+    private double precio;
+
+    public {{0}}(String nombre, double precio) {
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+
+    public {{1}}(String nombre) {
+        this.nombre = nombre;
+        this.precio = {{2}};
+    }
+}`,
+      ans: ["Producto", "Producto", "0.0"], extra: ["void", "class", "null"],
+      why: "Ambos constructores se llaman Producto. Tener dos con distintos parámetros es sobrecarga, y el segundo deja un precio inicial válido (0.0)." },
+    { t: "Asociación, agregación o composición", p: "Une cada situación con el tipo de relación que describe.",
+      code: `// Un Curso agrupa Estudiantes que existen sin el curso
+//   -> {{0}}
+// Un Cliente es dueño de su Cuenta; sin cliente no hay cuenta
+//   -> {{1}}
+// Un Dueño usa Mascotas, pero cada uno existe por separado
+//   -> {{2}}`,
+      ans: ["Agregación", "Composición", "Asociación"], extra: ["Herencia"],
+      why: "Si las partes pueden existir solas es agregación. Si mueren con el contenedor es composición. Una conexión simple sin propiedad es asociación." },
+    { t: "Agregación en código", p: "El curso guarda referencias a estudiantes que se crean por fuera. Eso es agregación.",
+      code: `public class Curso {
+    private Estudiante[] estudiantes;
+    private int cantidad;
+
+    public Curso(int capacidad) {
+        this.estudiantes = new Estudiante[{{0}}];
+        this.cantidad = 0;
+    }
+
+    public void matricular({{1}} e) {
+        estudiantes[cantidad] = e;
+        cantidad{{2}};
+    }
+}`,
+      ans: ["capacidad", "Estudiante", "++"], extra: ["--", "Curso", "capacidad()"],
+      why: "El tamaño del arreglo viene de capacidad. matricular recibe un Estudiante ya creado y cantidad++ avanza a la siguiente posición libre." }
+  ],
+  B: [
+    { t: "static para contar objetos", p: "Un atributo static es compartido por todos los objetos de la clase. Sirve para contadores.",
+      code: `public class Docente {
+    private {{0}} int cantidad = 0;
+    private String nombre;
+
+    public Docente(String nombre) {
+        this.nombre = nombre;
+        {{1}}++;
+    }
+
+    public static int getCantidad() {
+        return {{2}};
+    }
+}`,
+      ans: ["static", "cantidad", "cantidad"], extra: ["final", "this.cantidad"],
+      why: "static hace que cantidad pertenezca a la clase. Dentro de un método static no se puede usar this, por eso se devuelve cantidad sin this." },
+    { t: "Constantes con final", p: "Una constante de clase es static final y su nombre va en MAYÚSCULAS_CON_GUION_BAJO.",
+      code: `public class Config {
+    public {{0}} {{1}} double IGV = 0.18;
+    public static final String {{2}} = "SistemaVentas";
+}`,
+      ans: ["static", "final", "NOMBRE_APP"], extra: ["nombreApp", "private", "void"],
+      why: "static final convierte el atributo en una constante compartida que no cambia. La convención pide MAYÚSCULAS con guion bajo." },
+    { t: "this() y retornar this", p: "Un constructor puede llamar a otro de la misma clase con this(...), y siempre debe ser la primera instrucción.",
+      code: `public class Alumno {
+    private String nombre;
+    private String codigo;
+
+    public Alumno() {
+        {{0}}("Sin nombre", "u000000");
+    }
+
+    public Alumno(String nombre, String codigo) {
+        this.nombre = nombre;
+        this.codigo = codigo;
+    }
+
+    public Alumno yo() {
+        return {{1}};
+    }
+}`,
+      ans: ["this", "this"], extra: ["super", "new", "Alumno"],
+      why: "this(...) reutiliza el otro constructor sin repetir código. Un método puede devolver this para dar el objeto actual." },
+    { t: "Modificadores de acceso", p: "Completa cada descripción con el modificador correcto.",
+      code: `// visible desde cualquier clase
+//   -> {{0}}
+// solo dentro de la misma clase
+//   -> {{1}}
+// misma clase, mismo paquete y clases hijas
+//   -> {{2}}`,
+      ans: ["public", "private", "protected"], extra: ["static", "final"],
+      why: "public es el más permisivo, private el más restrictivo y protected queda en medio porque deja pasar a las clases hijas." },
+    { t: "Herencia con extends y super", p: "Empleado es un tipo especial de Persona. Reutiliza el constructor del padre.",
+      code: `public class Persona {
+    protected String nombre;
+    protected int edad;
+
+    public Persona(String nombre, int edad) {
+        this.nombre = nombre;
+        this.edad = edad;
+    }
+}
+
+public class Empleado {{0}} Persona {
+    private double salario;
+
+    public Empleado(String nombre, int edad, double salario) {
+        {{1}}(nombre, edad);
+        this.salario = salario;
+    }
+}`,
+      ans: ["extends", "super"], extra: ["implements", "this", "inherits"],
+      why: "extends crea la relación hija-padre. super(...) llama al constructor del padre y debe ir primero; sin él, Java busca un constructor vacío en Persona y falla." },
+    { t: "La clase Object", p: "Toda clase hereda de Object aunque no lo escribas.",
+      code: `public class Persona { }
+// Java lo interpreta como:
+public class Persona extends {{0}} { }
+
+// Entre otros, Object ofrece {{1}}(), equals() y hashCode().`,
+      ans: ["Object", "toString"], extra: ["Class", "main", "Persona"],
+      why: "Object es la raíz de la jerarquía y entrega métodos comunes como toString(), equals(), hashCode() y getClass()." }
+  ],
+  C: [
+    { t: "Polimorfismo con @Override", p: "La clase hija sobrescribe el método del padre. El objeto real decide qué versión se ejecuta.",
+      code: `public class Animal {
+    public void sonido() {
+        System.out.println("...");
+    }
+}
+
+public class Perro extends Animal {
+    {{0}}
+    public void sonido() {
+        System.out.println("Guau");
+    }
+}
+
+Animal a = new {{1}}();
+a.sonido();   // imprime: Guau`,
+      ans: ["@Override", "Perro"], extra: ["@Overload", "Animal", "super"],
+      why: "@Override marca la sobrescritura. Aunque la variable sea de tipo Animal, el objeto es Perro y responde a su manera." },
+    { t: "Interfaz como contrato", p: "Guerrero se compromete a implementar todos los métodos de la interfaz.",
+      code: `public {{0}} Atacable {
+    void atacar();
+}
+
+public class Guerrero {{1}} Atacable {
+    @Override
+    public void atacar() {
+        System.out.println("Golpe de espada");
+    }
+}`,
+      ans: ["interface", "implements"], extra: ["extends", "class", "abstract"],
+      why: "Una interfaz se declara con interface y una clase la cumple con implements. Debe implementar todos sus métodos abstractos." },
+    { t: "Método abstracto y default", p: "Una interfaz puede traer métodos sin cuerpo y métodos con implementación.",
+      code: `public interface Descontable {
+    // método {{0}}: no tiene cuerpo
+    double calcularDescuento(double precio);
+
+    {{1}} double aplicar(double precio) {
+        return precio - calcularDescuento(precio);
+    }
+}`,
+      ans: ["abstracto", "default"], extra: ["final", "private"],
+      why: "El método sin cuerpo es abstracto y lo implementa la clase. Con la palabra default la interfaz entrega una implementación que la clase puede usar o sobrescribir." },
+    { t: "ArrayList básico", p: "Agrega, consulta y cuenta elementos de una lista dinámica.",
+      code: `import java.util.ArrayList;
+import java.util.List;
+
+List<String> nombres = new {{0}}<>();
+nombres.{{1}}("Ana");
+nombres.add("Luis");
+String primero = nombres.{{2}}(0);   // "Ana"
+int total = nombres.{{3}}();         // 2`,
+      ans: ["ArrayList", "add", "get", "size"], extra: ["HashSet", "length", "put"],
+      why: "Se recomienda declarar List y crear un ArrayList. add agrega, get(i) consulta por índice desde 0 y size() cuenta los elementos." },
+    { t: "La trampa de remove con Integer", p: "En un ArrayList<Integer>, remove(1) borra por índice, no por valor.",
+      code: `List<Integer> numeros = new ArrayList<>(List.of(10, 20, 30, 1));
+
+numeros.remove(1);
+// elimina el elemento del índice {{0}}  -> queda [10, 30, 1]
+
+numeros.remove({{1}}.valueOf(1));
+// elimina el VALOR 1                    -> queda [10, 30]
+
+numeros.{{2}}(n -> n > 20);
+// elimina los mayores a 20              -> queda [10]`,
+      ans: ["1", "Integer", "removeIf"], extra: ["0", "int", "filter"],
+      why: "remove(int) usa el índice. Para borrar un valor se envuelve con Integer.valueOf. removeIf recibe una condición y evita borrar dentro de un for-each." },
+    { t: "Recorrer y validar índices", p: "for-each para leer y size() para validar antes de consultar.",
+      code: `for ({{0}} p : productos) {
+    System.out.println(p.getNombre());
+}
+
+if (indice >= 0 && indice < productos.{{1}}()) {
+    Producto elegido = productos.get(indice);
+}`,
+      ans: ["Producto", "size"], extra: ["int", "length", "String"],
+      why: "En el for-each la variable tiene el tipo de los elementos de la lista. Validar con size() evita IndexOutOfBoundsException." }
+  ]
+};
+
+/* ---------- utilidades ---------- */
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const KW = "public|private|protected|class|interface|extends|implements|static|final|void|new|return|if|for|import|int|double|boolean|this|super|default";
+const HL = new RegExp('("[^"]*")|(@\\w+)|\\b(' + KW + ')\\b|\\b([A-Z]\\w*)\\b|\\b(\\d+(?:\\.\\d+)?)\\b', 'g');
+function hl(text) {
+  return esc(text).replace(HL, (m, str, ann, kw, ty, num) =>
+    str ? '<span class="str">' + str + '</span>' :
+    ann ? '<span class="kw">' + ann + '</span>' :
+    kw ? '<span class="kw">' + kw + '</span>' :
+    ty ? '<span class="ty">' + ty + '</span>' :
+    '<span class="num">' + num + '</span>');
+}
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+let solved = new Set();
+try { solved = new Set(JSON.parse(localStorage.getItem("poo-ej-solved") || "[]")); } catch (e) {}
+function saveSolved() { try { localStorage.setItem("poo-ej-solved", JSON.stringify([...solved])); } catch (e) {} }
+
+/* ---------- render de una línea de código ---------- */
+function lineHTML(line, ex) {
+  const idx = line.indexOf("//");
+  const code = idx >= 0 ? line.slice(0, idx) : line;
+  const cm = idx >= 0 ? line.slice(idx) : "";
+  return part(code, ex, false) + (cm ? '<span class="cm">' + part(cm, ex, true) + '</span>' : "");
+}
+function part(text, ex, inComment) {
+  return text.split(/(\{\{\d+\}\})/).map(seg => {
+    const m = seg.match(/^\{\{(\d+)\}\}$/);
+    if (!m) return inComment ? esc(seg) : hl(seg);
+    const i = +m[1];
+    const chipId = ex.placed[i];
+    const chip = chipId === null ? null : ex.chips.find(c => c.id === chipId);
+    let cls = "slot";
+    if (chip) cls += " filled";
+    if (ex.checked && chip) cls += chip.t === ex.ans[i] ? " ok" : " bad";
+    const label = chip ? esc(chip.t) : "&nbsp;";
+    return '<button type="button" class="' + cls + '" data-slot="' + i + '"' + (chip ? ' draggable="true" data-chip="' + chip.id + '"' : "") +
+      ' aria-label="Hueco ' + (i + 1) + (chip ? ": " + esc(chip.t) : ": vacío") + '">' + label + '</button>';
+  }).join("");
+}
+
+/* ---------- estado y tarjetas ---------- */
+GROUPS.forEach(g => EX[g.key].forEach((ex, n) => {
+  ex.id = g.key + n;
+  ex.lines = ex.code.split("\n");
+  const all = [...ex.ans, ...ex.extra].map((t, id) => ({ t, id }));
+  ex.chips = shuffle(all);
+  ex.placed = ex.ans.map(() => null);
+  ex.sel = null; ex.checked = false; ex.revealed = false;
+}));
+
+function correctCount(ex) { return ex.placed.filter((cid, i) => cid !== null && ex.chips.find(c => c.id === cid).t === ex.ans[i]).length; }
+
+function render(ex) {
+  const inBank = ex.chips.filter(c => !ex.placed.includes(c.id));
+  const n = ex.ans.length;
+  const ok = ex.checked ? correctCount(ex) : 0;
+  const done = ex.checked && ok === n;
+  let result = "";
+  if (ex.checked) {
+    result = done
+      ? '<div class="result good" role="status"><strong>Correcto.</strong> ' + esc(ex.why) + '</div>'
+      : '<div class="result warn" role="status"><strong>' + ok + ' de ' + n + ' correctas.</strong> Los huecos en rojo no van ahí. Cámbialos y vuelve a comprobar.</div>';
+  }
+  const filled = ex.placed.every(v => v !== null);
+  ex.el.innerHTML =
+    '<h2><span class="n">' + String(+ex.id.slice(1) + 1).padStart(2, "0") + '</span>' + esc(ex.t) + (solved.has(ex.id) ? ' <span class="badge">Resuelto</span>' : "") + '</h2>' +
+    '<p class="prompt">' + esc(ex.p) + '</p>' +
+    '<pre class="code">' + ex.lines.map(l => '<span class="ln">' + lineHTML(l, ex) + '</span>').join("") + '</pre>' +
+    '<div class="bank" data-bank="1">' + (inBank.length ? inBank.map(c => '<button type="button" class="chip' + (ex.sel === c.id ? " sel" : "") + '" draggable="true" data-chip="' + c.id + '">' + esc(c.t) + '</button>').join("") : '<span class="empty">Todas las piezas están en el código.</span>') + '</div>' +
+    '<div class="actions"><button type="button" class="btn primary" data-act="check"' + (filled ? "" : " disabled") + '>Comprobar</button>' +
+    '<button type="button" class="btn" data-act="solve">Ver solución</button>' +
+    '<button type="button" class="btn" data-act="reset">Reiniciar</button></div>' + result;
+  const b = ex.el.querySelector('[data-act="check"]');
+  if (b && !filled) { b.style.opacity = "0.55"; b.style.cursor = "not-allowed"; }
+  if (done && !solved.has(ex.id)) { solved.add(ex.id); saveSolved(); updateTabs(); render(ex); }
+}
+
+function place(ex, slot, chipId) {
+  const prev = ex.placed.indexOf(chipId);
+  if (prev >= 0) ex.placed[prev] = null;
+  ex.placed[slot] = chipId;
+  ex.checked = false; ex.sel = null;
+}
+function unplace(ex, chipId) {
+  const prev = ex.placed.indexOf(chipId);
+  if (prev >= 0) ex.placed[prev] = null;
+  ex.checked = false; ex.sel = null;
+}
+
+function wire(ex) {
+  const el = ex.el;
+  el.addEventListener("click", e => {
+    const act = e.target.closest("[data-act]");
+    if (act) {
+      const a = act.dataset.act;
+      if (a === "check") { if (ex.placed.every(v => v !== null)) { ex.checked = true; render(ex); } }
+      if (a === "reset") { ex.placed = ex.ans.map(() => null); ex.sel = null; ex.checked = false; render(ex); }
+      if (a === "solve") {
+        ex.placed = ex.ans.map(() => null);
+        const used = new Set();
+        ex.ans.forEach((t, i) => { const c = ex.chips.find(c => c.t === t && !used.has(c.id)); used.add(c.id); ex.placed[i] = c.id; });
+        ex.checked = true; ex.sel = null; render(ex);
+      }
+      return;
+    }
+    const slot = e.target.closest("[data-slot]");
+    if (slot) {
+      const i = +slot.dataset.slot;
+      if (ex.sel !== null) place(ex, i, ex.sel);
+      else if (ex.placed[i] !== null) { ex.placed[i] = null; ex.checked = false; }
+      render(ex); return;
+    }
+    const chip = e.target.closest(".chip");
+    if (chip) { const id = +chip.dataset.chip; ex.sel = ex.sel === id ? null : id; render(ex); }
+  });
+  el.addEventListener("dragstart", e => {
+    const t = e.target.closest("[data-chip]");
+    if (!t) return;
+    e.dataTransfer.setData("text/plain", t.dataset.chip);
+    e.dataTransfer.effectAllowed = "move";
+  });
+  el.addEventListener("dragover", e => {
+    const t = e.target.closest("[data-slot],[data-bank]");
+    if (t) { e.preventDefault(); t.classList.add("over"); }
+  });
+  el.addEventListener("dragleave", e => {
+    const t = e.target.closest("[data-slot],[data-bank]");
+    if (t) t.classList.remove("over");
+  });
+  el.addEventListener("drop", e => {
+    const t = e.target.closest("[data-slot],[data-bank]");
+    if (!t) return;
+    e.preventDefault();
+    const raw = e.dataTransfer.getData("text/plain");
+    if (raw === "") return;
+    const id = +raw;
+    if (!ex.chips.some(c => c.id === id)) return;
+    if (t.dataset.slot !== undefined) place(ex, +t.dataset.slot, id); else unplace(ex, id);
+    render(ex);
+  });
+}
+
+/* ---------- pestañas ---------- */
+const tabsEl = document.getElementById("tabs");
+const panelsEl = document.getElementById("panels");
+let current = "A";
+try { const s = localStorage.getItem("poo-ej-tab"); if (s && EX[s]) current = s; } catch (e) {}
+
+GROUPS.forEach(g => {
+  const btn = document.createElement("button");
+  btn.className = "tab"; btn.type = "button"; btn.setAttribute("role", "tab"); btn.dataset.key = g.key;
+  btn.addEventListener("click", () => { current = g.key; try { localStorage.setItem("poo-ej-tab", g.key); } catch (e) {} showTab(); });
+  tabsEl.appendChild(btn);
+  const panel = document.createElement("section");
+  panel.className = "panel"; panel.dataset.key = g.key; panel.setAttribute("role", "tabpanel");
+  const intro = document.createElement("p");
+  intro.className = "prompt"; intro.style.cssText = "margin:0;color:var(--muted)"; intro.textContent = g.title + ".";
+  panel.appendChild(intro);
+  EX[g.key].forEach(ex => {
+    ex.el = document.createElement("article"); ex.el.className = "card";
+    panel.appendChild(ex.el); wire(ex); render(ex);
+  });
+  panelsEl.appendChild(panel);
+});
+
+function updateTabs() {
+  GROUPS.forEach(g => {
+    const done = EX[g.key].filter(ex => solved.has(ex.id)).length;
+    const btn = tabsEl.querySelector('[data-key="' + g.key + '"]');
+    btn.innerHTML = esc(g.label) + ' <span class="count">' + done + '/' + EX[g.key].length + '</span>';
+  });
+}
+function showTab() {
+  tabsEl.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.key === current)));
+  panelsEl.querySelectorAll(".panel").forEach(p => { p.hidden = p.dataset.key !== current; });
+}
+updateTabs(); showTab();
+</script>
+
+</body>
+</html>
